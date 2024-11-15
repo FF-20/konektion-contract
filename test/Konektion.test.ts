@@ -100,6 +100,9 @@ describe("Konektion", function() {
             //Check wallet balances
             const balance_after = await hre.ethers.provider.getBalance(addr1);
 
+            console.log(hre.ethers.ensNormalize("Zesti"));
+            console.log(hre.ethers.namehash(hre.ethers.ensNormalize("zesti")));
+
             expect(balance_after).to.be.approximately(balance_before, deltaAmount);
 
         })

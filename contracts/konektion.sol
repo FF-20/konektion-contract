@@ -78,8 +78,13 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
     function VerifySignature(
         PaymentRequest memory request,
         bytes memory signature
-    ) {
+    ) external view returns (bool){
+        // Ensure signature is not expired
+        require(block.timestamp <= request.expire, "Signature expired"); 
+        // Ensure nonce is correct
+        require(request.nonce == nonces[request.sender] + 1, "Invalid nonce");
 
+        return recoverAddressOfRequest(request, signature) == request.sender;
     }
 
     // function Payment() {
