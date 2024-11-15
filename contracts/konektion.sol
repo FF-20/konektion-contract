@@ -18,7 +18,7 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
     }
 
     //Mapping
-    mapping(address => uint256) private balances;
+    mapping(address => uint256) public balances;
 
     mapping(address => uint256) public nonces;
 
@@ -31,8 +31,8 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
     );
 
     //Events
-    event Deposit(address indexed address, uint256 amount, uint256 balance);
-    event Withdraw(address indexed address, uint256 amount, uint256 balance);
+    event Deposited(address indexed deposit, uint256 amount, uint256 balance);
+    event Withdrawn(address indexed withdraw, uint256 amount, uint256 balance);
     event Payment(address indexed from, address indexed to, uint256 amount);
     event SignatureVerified();
 
@@ -43,7 +43,7 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                 keccak256(bytes("SimplyPay")),        // name
                 keccak256(bytes("1.0")),            // version
-                block.chainId,                      // chainId
+                block.chainid,                      // chainId
                 address(this)                       // verifyingContract
             )
         );
@@ -51,19 +51,19 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
     }
 
     function Deposit(uint256 amount) nonReentrant external payable{
-        require(msg.value >= _tokenAmount, "Insufficient ether.");
-        require(msg.value > 0, "You can't deposit 0 ether");
+        require(msg.value >= amount, "Insufficient ether.");
+        require(msg.value > 0, "You can't deposit 0 ether.");
 
         //Update balance mapping
         balances[msg.sender] += msg.value;
 
         //Emit event
-        emit Deposit(msg.sender, msg.value, balances[msg.sender]);
+        emit Deposited(msg.sender, msg.value, balances[msg.sender]);
     }
 
-    function Withdraw(uint256 amount) {
-        require(msg.value <= balances[msg.sender], "Insufficient funds");
-        require(msg.value > 0, "You can't withdraw 0 ether");
+    function Withdraw(uint256 amount) nonReentrant external  {
+        require(amount <= balances[msg.sender], "Insufficient funds.");
+        require(amount > 0, "You can't withdraw 0 ether");
 
         //Update balance mapping
         balances[msg.sender] -= amount;
@@ -72,16 +72,16 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
         payable(msg.sender).transfer(amount);
 
         //Emit event
-        emit Withdraw(msg.sender, amount, balances[msg.sender])
+        emit Withdrawn(msg.sender, amount, balances[msg.sender]);
     }
 
-    function Verify() {
+    // function Verify() {
 
-    }
+    // }
 
-    function Payment() {
+    // function Payment() {
 
-    }
+    // }
 
     //Helper function
 
