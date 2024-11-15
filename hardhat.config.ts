@@ -45,6 +45,10 @@ const config: HardhatUserConfig = {
     "arbitrum-sepolia": {
       url: process.env.ALCHEMY_ARBITRUM_SEPOLIA_API,
       accounts,
+    },
+    "scroll-sepolia": {
+      url: process.env.ALCHEMY_SCROLL_SEPOLIA_API,
+      accounts,
     }
   },
   sourcify: {

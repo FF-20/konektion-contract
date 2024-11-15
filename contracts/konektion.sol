@@ -75,14 +75,42 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
         emit Withdrawn(msg.sender, amount, balances[msg.sender]);
     }
 
-    // function Verify() {
+    function VerifySignature(
+        PaymentRequest memory request,
+        bytes memory signature
+    ) {
 
-    // }
+    }
 
     // function Payment() {
 
     // }
 
     //Helper function
+    function recoverAddressOfRequest(
+        PaymentRequest memory request,
+        bytes memory signature
+    ) internal view returns (address) {
+        bytes32 digest = keccak256(
+            abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, keccak256(encodeRequest(request)))
+        );
+
+        return ECDSA.recover(digest, signature);
+    }
+
+
+    function encodeRequest(PaymentRequest memory request) internal pure returns (bytes memory) {
+        return (
+            abi.encode(
+                REQUEST_TYPEHASH,
+                request.sender,
+                request.amount,
+                request.nonce,
+                request.expire
+            )
+        );
+    }
+
+
 
 }
