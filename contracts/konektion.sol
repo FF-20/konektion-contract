@@ -33,7 +33,7 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
     //Events
     event Deposited(address indexed deposit, uint256 amount, uint256 balance);
     event Withdrawn(address indexed withdraw, uint256 amount, uint256 balance);
-    event Payment(address indexed from, address indexed to, uint256 amount);
+    event PaymentExecuted(address indexed from, address indexed to, uint256 amount);
     event SignatureVerified();
 
     constructor() {
@@ -87,8 +87,22 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
         return recoverAddressOfRequest(request, signature) == request.sender;
     }
 
-    function Payment() {
+    function Payment(
+        PaymentRequest memory request,
+        bytes memory signature
+    ) nonReentrant external {
+        //Ensure signature is valid
+        require(this.verifySignature(request, signature), "Signature is invalid");
 
+        //Ensure that user have enough funds
+        require(balances[msg.sender] >= request.amount, "Insufficient balance.");
+
+        //Update balances
+        balances[msg.sender] -= request.amount;
+        balances[request.sender] += request.amount;
+
+        //Emit event
+        emit PaymentExecuted(msg.sender, request.sender, request.amount);
     }
 
     //Helper function

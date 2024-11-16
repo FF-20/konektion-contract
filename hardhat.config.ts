@@ -49,6 +49,10 @@ const config: HardhatUserConfig = {
     "scroll-sepolia": {
       url: process.env.ALCHEMY_SCROLL_SEPOLIA_API,
       accounts,
+    },
+    "base-sepolia": {
+      url: process.env.ALCHEMY_BASE_SEPOLIA_API,
+      accounts,
     }
   },
   sourcify: {
