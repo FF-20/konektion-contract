@@ -107,4 +107,67 @@ describe("Konektion", function() {
 
         })
     })
+    describe("Should create and verify signature", function() {
+        it("Should create signature", async function() {
+            // Define the domain and types
+            const domain = {
+                name: 'Konektion',
+                version: '1.0',
+                chainId: 1, // Mainnet chain ID
+                verifyingContract: await Konektion.getAddress(),
+            }
+
+            const types = {
+                PaymentRequest: [
+                    {name: "sender", type:"address"},
+                    {name: "amount", type:"uint256"},
+                    {name: "nonce", type:"uint256"},
+                    {name: "expire", type:"uint256"},
+                ],
+            }
+
+            const currentNonce = await Konektion.nonces(signer);
+            const nonce = hre.ethers.toNumber(currentNonce) + 1;
+
+            // Get the current time in seconds since Unix epoch
+            const currentTime = Math.floor(Date.now() / 1000);
+
+            expireTime = currentTime + 5 * 60; 
+            
+            const message = {
+                sender: await signer.getAddress(),
+                amount: hre.ethers.parseEther("10").toString(),
+                nonce: nonce,
+                expire: expireTime
+            }
+
+            signature = await signer.signTypedData(domain, types, message);
+
+            expect(signature).not.null
+        })
+        it("Should verify signature", async function() {
+            const amount = hre.ethers.parseEther("10").toString();
+            const currentNonce = await Konektion.nonces(signer);
+            const nonce = hre.ethers.toNumber(currentNonce) + 1;
+
+            const request = {
+                sender: await signer.getAddress(),
+                amount: amount,
+                nonce: nonce,
+                expire: expireTime
+            }
+
+            expect(
+                await Konektion.verifySignature(
+                    request,
+                    signature
+                )
+            )
+            .to.be.true;
+        })
+    })
+    describe("Should be able to generate signature, and payment", function() {
+        
+    })
+
 })

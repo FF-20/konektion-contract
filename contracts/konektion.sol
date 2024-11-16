@@ -41,9 +41,9 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
             abi.encode(
                 // EIP-712 Domain Separator TypeHash
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                keccak256(bytes("SimplyPay")),        // name
+                keccak256(bytes("Konektion")),        // name
                 keccak256(bytes("1.0")),            // version
-                block.chainid,                      // chainId
+                1,                      // chainId
                 address(this)                       // verifyingContract
             )
         );
@@ -75,7 +75,7 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
         emit Withdrawn(msg.sender, amount, balances[msg.sender]);
     }
 
-    function VerifySignature(
+    function verifySignature(
         PaymentRequest memory request,
         bytes memory signature
     ) external view returns (bool){
@@ -87,9 +87,9 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
         return recoverAddressOfRequest(request, signature) == request.sender;
     }
 
-    // function Payment() {
+    function Payment() {
 
-    // }
+    }
 
     //Helper function
     function recoverAddressOfRequest(
