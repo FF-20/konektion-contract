@@ -62,6 +62,8 @@ describe("Konektion", function() {
     before(async function () {
         [signer, deployer, addr1, addr2, merchant, addr4, ...addrs] = await hre.ethers.getSigners();
 
+        console.log(hre.ethers.parseEther("0.001"));
+
         KonektionContractFactory = await hre.ethers.getContractFactory("Konektion", deployer);
 
         Konektion = await KonektionContractFactory.deploy();

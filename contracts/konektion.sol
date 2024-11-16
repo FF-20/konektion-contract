@@ -43,7 +43,7 @@ contract Konektion is ReentrancyGuard , EIP712("Konektion", "1")  {
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                 keccak256(bytes("Konektion")),        // name
                 keccak256(bytes("1.0")),            // version
-                1,                      // chainId
+                block.chainid,                      // chainId
                 address(this)                       // verifyingContract
             )
         );
